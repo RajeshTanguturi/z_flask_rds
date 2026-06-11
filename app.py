@@ -1,22 +1,30 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:adminadmin@database-1.cj6w02cuehgf.us-east-1.rds.amazonaws.com/taskdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = ''
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True
 }
-
+    
 db = SQLAlchemy(app)
 
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    task_name = db.Column(db.String(200), nullable=False)
-    status = db.Column(db.String(50), default='Pending')
 
+    id = db.Column(db.Integer, primary_key=True)
+
+    task_name = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    status = db.Column(
+        db.String(50),
+        default="Pending"
+    )
 
 with app.app_context():
     db.create_all()
@@ -24,8 +32,7 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return {"message": "Task Manager API Running"}
-
+    return render_template("index.html")
 
 @app.route("/tasks", methods=["POST"])
 def create_task():
